@@ -1,21 +1,37 @@
-// template
 import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { Tabs } from "expo-router";
 import { NativeTabs, Icon, Label } from "expo-router/unstable-native-tabs";
 import { BlurView } from "expo-blur";
-import { SymbolView } from "expo-symbols";
-import { Platform, StyleSheet, useColorScheme } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Platform, StyleSheet, useColorScheme, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React from "react";
-
+import { useTranslation } from "react-i18next";
 import Colors from "@/constants/colors";
 
-//IMPORTANT: iOS 26 Exists, feel free to use NativeTabs for native tabs with liquid glass support.
 function NativeTabLayout() {
+  const { t } = useTranslation();
   return (
     <NativeTabs>
       <NativeTabs.Trigger name="index">
         <Icon sf={{ default: "house", selected: "house.fill" }} />
-        <Label>Home</Label>
+        <Label>{t('tabs.home')}</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="calculators">
+        <Icon sf={{ default: "equal.circle", selected: "equal.circle.fill" }} />
+        <Label>{t('tabs.calculators')}</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="schemes">
+        <Icon sf={{ default: "doc.text", selected: "doc.text.fill" }} />
+        <Label>{t('tabs.schemes')}</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="learn">
+        <Icon sf={{ default: "book", selected: "book.fill" }} />
+        <Label>{t('tabs.learn')}</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="more">
+        <Icon sf={{ default: "ellipsis.circle", selected: "ellipsis.circle.fill" }} />
+        <Label>{t('tabs.more')}</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );
@@ -24,38 +40,83 @@ function NativeTabLayout() {
 function ClassicTabLayout() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+  const isWeb = Platform.OS === "web";
+  const isIOS = Platform.OS === "ios";
+  const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors.light.tint,
+        tabBarActiveTintColor: Colors.primary,
         tabBarInactiveTintColor: Colors.light.tabIconDefault,
-        headerShown: true,
+        headerShown: false,
         tabBarStyle: {
           position: "absolute",
-          backgroundColor: Platform.select({
-            ios: "transparent",
-            android: isDark ? "#000" : "#fff",
-          }),
-          borderTopWidth: 0,
+          backgroundColor: isIOS ? "transparent" : isDark ? "#000" : "#fff",
+          borderTopWidth: isWeb ? 1 : 0,
+          borderTopColor: isDark ? "#333" : "#E5E7EB",
           elevation: 0,
+          ...(isWeb ? { height: 84 } : {}),
         },
         tabBarBackground: () =>
-          Platform.OS === "ios" ? (
+          isIOS ? (
             <BlurView
               intensity={100}
               tint={isDark ? "dark" : "light"}
               style={StyleSheet.absoluteFill}
             />
+          ) : isWeb ? (
+            <View style={[StyleSheet.absoluteFill, { backgroundColor: isDark ? "#000" : "#fff" }]} />
           ) : null,
+        tabBarLabelStyle: {
+          fontFamily: 'Inter_500Medium',
+          fontSize: 11,
+        },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => (
-            <SymbolView name="house" tintColor={color} size={24} />
+          title: t('tabs.home'),
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "home" : "home-outline"} size={22} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="calculators"
+        options={{
+          title: t('tabs.calculators'),
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "calculator" : "calculator-outline"} size={22} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="schemes"
+        options={{
+          title: t('tabs.schemes'),
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "document-text" : "document-text-outline"} size={22} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="learn"
+        options={{
+          title: t('tabs.learn'),
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "book" : "book-outline"} size={22} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="more"
+        options={{
+          title: t('tabs.more'),
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "ellipsis-horizontal-circle" : "ellipsis-horizontal-circle-outline"} size={22} color={color} />
           ),
         }}
       />

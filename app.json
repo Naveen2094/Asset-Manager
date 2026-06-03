@@ -43,7 +43,7 @@
       "reactCompiler": true
     },
     "extra": {
-      "MISTRAL_API_KEY": "OgLallOar9DRg0xGKW20tjbVwcavgzgk",
+      "MISTRAL_API_KEY": "YOUR API KEY",
       "router": {
         "origin": "https://replit.com/"
       },

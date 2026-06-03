@@ -1,8 +1,17 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, Platform } from 'react-native';
-import { useLocalSearchParams, Stack, router } from 'expo-router';
+import {
+  Image,
+  Linking,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  Platform,
+} from 'react-native';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useFont } from '@/lib/fonts';
@@ -10,68 +19,67 @@ import { lessons } from '@/lib/lessons-data';
 
 export default function LessonDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const fonts = useFont();
-  const isTamil = i18n.language === 'ta';
-  const lesson = lessons.find(l => l.id === id);
+  const insets = useSafeAreaInsets();
+  const isTamil = i18n.language.startsWith('ta');
 
-  if (!lesson) return null;
+  const lesson = lessons.find((l) => l.id === id);
 
+  if (!lesson) {
+    return null;
+  }
+
+  const title = isTamil ? lesson.title_ta : lesson.title_en;
   const content = isTamil ? lesson.content_ta : lesson.content_en;
-  const example = isTamil ? lesson.example_ta : lesson.example_en;
+  const video = isTamil ? lesson.video_ta : lesson.video_en;
+  const videoId = video.url.split('youtu.be/')[1];
+  const thumbnail = `https://img.youtube.com/vi/${videoId}/0.jpg`;
 
-  const handleCalculator = () => {
-    if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    if (lesson.relatedCalculator) {
-      router.push({ pathname: '/calculator/[type]', params: { type: lesson.relatedCalculator } });
+  const handleVideoPress = async (url: string) => {
+    if (Platform.OS !== 'web') {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+
+    const canOpen = await Linking.canOpenURL(url);
+    if (canOpen) {
+      await Linking.openURL(url);
     }
   };
 
   return (
     <>
-      <Stack.Screen options={{ title: isTamil ? lesson.title_ta : lesson.title_en }} />
+      <Stack.Screen options={{ title }} />
+
       <ScrollView
         style={styles.container}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[
+          styles.content,
+          {
+            paddingTop: insets.top + (Platform.OS === 'web' ? 67 : 16),
+            paddingBottom: 100,
+          },
+        ]}
         showsVerticalScrollIndicator={false}
       >
-        <View style={[styles.iconBox, { backgroundColor: lesson.color + '15' }]}>
-          <Ionicons name={lesson.icon as any} size={36} color={lesson.color} />
+        <Text style={[styles.title, { fontFamily: fonts.bold }]}>{title}</Text>
+
+        <View style={styles.textCard}>
+          <Text style={[styles.description, { fontFamily: fonts.regular }]}>{content}</Text>
         </View>
 
-        <Text style={[styles.title, { fontFamily: fonts.bold }]}>
-          {isTamil ? lesson.title_ta : lesson.title_en}
-        </Text>
+        <Pressable style={styles.videoCard} onPress={() => handleVideoPress(video.url)}>
+          <Image source={{ uri: thumbnail }} style={styles.videoThumbnail} />
 
-        <View style={styles.contentCard}>
-          {content.map((paragraph, i) => (
-            <View key={i} style={styles.paragraph}>
-              <View style={[styles.bullet, { backgroundColor: lesson.color }]} />
-              <Text style={[styles.paragraphText, { fontFamily: fonts.regular }]}>
-                {paragraph}
-              </Text>
-            </View>
-          ))}
-        </View>
-
-        {example && (
-          <View style={[styles.exampleCard, { borderLeftColor: lesson.color }]}>
-            <Ionicons name="bulb" size={20} color={lesson.color} />
-            <Text style={[styles.exampleText, { fontFamily: fonts.medium }]}>
-              {example}
+          <View style={styles.videoInfo}>
+            <Text style={[styles.videoTitle, { fontFamily: fonts.semiBold }]}>
+              {video.title}
+            </Text>
+            <Text style={[styles.watchText, { fontFamily: fonts.regular }]}>
+              {isTamil ? 'YouTube இல் பார்க்க' : 'Watch on YouTube'}
             </Text>
           </View>
-        )}
-
-        {lesson.relatedCalculator && (
-          <Pressable style={styles.calcBtn} onPress={handleCalculator}>
-            <Ionicons name="calculator" size={20} color={Colors.primary} />
-            <Text style={[styles.calcBtnText, { fontFamily: fonts.semiBold }]}>
-              {t('learn.try_calculator')}
-            </Text>
-            <Ionicons name="arrow-forward" size={16} color={Colors.primary} />
-          </Pressable>
-        )}
+        </Pressable>
       </ScrollView>
     </>
   );
@@ -79,53 +87,43 @@ export default function LessonDetailScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
-  content: { padding: 20, paddingBottom: 40 },
-  iconBox: {
-    width: 72,
-    height: 72,
-    borderRadius: 22,
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    marginBottom: 16,
-  },
-  title: { fontSize: 22, color: Colors.text, textAlign: 'center', marginBottom: 24 },
-  contentCard: {
+  content: { paddingHorizontal: 20 },
+  title: { fontSize: 26, color: Colors.text },
+  textCard: {
     backgroundColor: Colors.surface,
-    borderRadius: 18,
-    padding: 20,
-    gap: 16,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    borderRadius: 16,
+    padding: 16,
+    marginTop: 12,
+  },
+  description: {
+    fontSize: 15,
+    lineHeight: 24,
+    color: Colors.text,
+  },
+  videoCard: {
+    marginTop: 20,
+    backgroundColor: Colors.surface,
+    borderRadius: 14,
+    overflow: 'hidden',
     borderWidth: 1,
     borderColor: Colors.borderLight,
   },
-  paragraph: { flexDirection: 'row', gap: 12 },
-  bullet: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginTop: 7,
+  videoThumbnail: {
+    width: '100%',
+    height: 180,
   },
-  paragraphText: { fontSize: 15, color: Colors.text, lineHeight: 24, flex: 1 },
-  exampleCard: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 10,
-    backgroundColor: Colors.accentLight,
-    borderRadius: 16,
-    padding: 18,
-    marginTop: 16,
-    borderLeftWidth: 4,
+  videoInfo: { flex: 1 },
+  videoTitle: {
+    fontSize: 16,
+    padding: 12,
+    color: Colors.text,
   },
-  exampleText: { fontSize: 14, color: Colors.text, lineHeight: 22, flex: 1 },
-  calcBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    backgroundColor: Colors.primaryLight,
-    borderRadius: 14,
-    padding: 16,
-    marginTop: 20,
+  watchText: {
+    fontSize: 12,
+    paddingHorizontal: 12,
+    paddingBottom: 12,
+    color: Colors.textSecondary,
   },
-  calcBtnText: { fontSize: 16, color: Colors.primary },
 });

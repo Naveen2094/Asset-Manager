@@ -2,6 +2,7 @@ export interface Scheme {
   id: string;
   name_ta: string;
   name_en: string;
+  link: string;
   category: string;
   eligibility_ta: string;
   eligibility_en: string;
@@ -23,6 +24,7 @@ export const schemes: Scheme[] = [
     id: 'cm_health',
     name_ta: 'முதலமைச்சரின் விரிவான மருத்துவக் காப்பீட்டுத் திட்டம்',
     name_en: 'CM Comprehensive Health Insurance Scheme',
+    link: 'https://www.cmchistn.com/',
     category: 'health',
     eligibility_ta: 'ஆண்டு வருமானம் ₹1,20,000-க்குக் குறைவான குடும்பங்கள்',
     eligibility_en: 'Families with annual income below ₹1,20,000',
@@ -42,6 +44,7 @@ export const schemes: Scheme[] = [
     id: 'first_graduate',
     name_ta: 'முதல் பட்டதாரி திட்டம்',
     name_en: 'First Graduate Scheme',
+    link: 'https://www.tnscholarships.gov.in/',
     category: 'education',
     eligibility_ta: 'குடும்பத்தில் முதல் பட்டதாரி மாணவர்கள், ஆண்டு வருமானம் ₹2.5 லட்சத்திற்கு குறைவு',
     eligibility_en: 'First graduate students in family, annual income below ₹2.5 lakhs',
@@ -61,6 +64,7 @@ export const schemes: Scheme[] = [
     id: 'post_matric',
     name_ta: 'பிற்படுத்தப்பட்டோர் மேல்நிலைக் கல்வி உதவித்தொகை',
     name_en: 'Post-Matric Scholarship (BC/MBC)',
+    link: 'https://bcmbc.tn.gov.in/scholarship',
     category: 'education',
     eligibility_ta: 'பிற்படுத்தப்பட்ட வகுப்பு மாணவர்கள், 10ஆம் வகுப்பு முடித்தவர்கள்',
     eligibility_en: 'BC/MBC students who completed 10th standard',
@@ -80,6 +84,7 @@ export const schemes: Scheme[] = [
     id: 'moovalur',
     name_ta: 'மூவலூர் ராமாமிர்தம் அம்மையார் திட்டம்',
     name_en: 'Moovalur Ramamirtham Ammaiyar Scheme',
+    link: 'https://www.pudumaipenn.tn.gov.in/',
     category: 'women',
     eligibility_ta: 'ஏழை குடும்பங்களின் பெண் குழந்தைகள், 12ஆம் வகுப்பு வரை படிக்கும் மாணவிகள்',
     eligibility_en: 'Girl children from poor families studying up to 12th standard',
@@ -99,6 +104,7 @@ export const schemes: Scheme[] = [
     id: 'mahalir_urimai',
     name_ta: 'மகளிர் உரிமைத் தொகை திட்டம்',
     name_en: 'Mahalir Urimai Thogai (Kalaignar)',
+    link: 'https://kmut.tn.gov.in/',
     category: 'women',
     eligibility_ta: '21 வயதுக்கு மேற்பட்ட பெண்கள், குடும்ப ஆண்டு வருமானம் ₹2.5 லட்சத்திற்கு குறைவு',
     eligibility_en: 'Women above 21 years, family annual income below ₹2.5 lakhs',
@@ -118,6 +124,7 @@ export const schemes: Scheme[] = [
     id: 'muthulakshmi',
     name_ta: 'டாக்டர் முத்துலட்சுமி ரெட்டி மகப்பேறு நிதி உதவித் திட்டம்',
     name_en: 'Dr. Muthulakshmi Reddy Maternity Scheme',
+    link: 'https://nhm.tn.gov.in/en/rchs/maternal-health',
     category: 'women',
     eligibility_ta: 'ஏழை குடும்பங்களின் கர்ப்பிணிப் பெண்கள்',
     eligibility_en: 'Pregnant women from economically weaker families',
@@ -137,6 +144,7 @@ export const schemes: Scheme[] = [
     id: 'marriage_assistance',
     name_ta: 'திருமண உதவித் திட்டம்',
     name_en: 'Marriage Assistance Scheme',
+    link: 'https://www.socialjustice.tn.gov.in/',
     category: 'women',
     eligibility_ta: 'ஏழை குடும்பங்களின் பெண்கள், பட்டப்படிப்பு முடித்தவர்கள்',
     eligibility_en: 'Women from poor families who completed degree',
@@ -155,7 +163,8 @@ export const schemes: Scheme[] = [
   {
     id: 'farmer_insurance',
     name_ta: 'பிரதமர் பயிர் காப்பீட்டுத் திட்டம்',
-    name_en: 'PM Fasal Bima Yojana (Crop Insurance)',
+    name_en: 'PM Fasal Bima Yojana',
+    link: 'https://pmfby.gov.in/',
     category: 'farmer',
     eligibility_ta: 'அனைத்து விவசாயிகளும் (நிலம் உள்ள/குத்தகை)',
     eligibility_en: 'All farmers (own land or leased)',
@@ -174,7 +183,8 @@ export const schemes: Scheme[] = [
   {
     id: 'farmer_pension',
     name_ta: 'பிரதமர் கிசான் மான்-தன் திட்டம்',
-    name_en: 'PM Kisan Maan-Dhan (Farmer Pension)',
+    name_en: 'PM Kisan Maan-Dhan',
+    link: 'https://maandhan.in/',
     category: 'farmer',
     eligibility_ta: '18-40 வயது விவசாயிகள், 2 ஹெக்டேருக்கு குறைவான நிலம்',
     eligibility_en: 'Farmers aged 18-40, less than 2 hectares land',
@@ -194,6 +204,7 @@ export const schemes: Scheme[] = [
     id: 'old_age_pension',
     name_ta: 'முதியோர் ஓய்வூதியத் திட்டம்',
     name_en: 'Old Age Pension Scheme',
+    link: 'https://nsap.nic.in/',
     category: 'senior',
     eligibility_ta: '60 வயதுக்கு மேற்பட்டவர்கள், ஆண்டு வருமானம் ₹24,000-க்கு குறைவு',
     eligibility_en: 'Persons above 60 years, annual income below ₹24,000',
@@ -213,6 +224,7 @@ export const schemes: Scheme[] = [
     id: 'sukanya',
     name_ta: 'சுகன்யா சம்ரிதி யோஜனா',
     name_en: 'Sukanya Samriddhi Yojana',
+    link: 'https://www.nsiindia.gov.in/',
     category: 'savings',
     eligibility_ta: '10 வயதுக்குக் குறைவான பெண் குழந்தைகள் (அதிகபட்சம் 2 குழந்தைகள்)',
     eligibility_en: 'Girl children below 10 years (maximum 2 children)',
@@ -232,6 +244,7 @@ export const schemes: Scheme[] = [
     id: 'senior_savings',
     name_ta: 'மூத்த குடிமக்கள் சேமிப்புத் திட்டம்',
     name_en: 'Senior Citizen Savings Scheme',
+    link: 'https://www.nsiindia.gov.in/',
     category: 'senior',
     eligibility_ta: '60 வயதுக்கு மேற்பட்டவர்கள்',
     eligibility_en: 'Persons above 60 years',

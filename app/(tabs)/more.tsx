@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, Platform } from 'react-native';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,12 +12,14 @@ const menuItems = [
   { key: 'family', icon: 'people-outline' as const, route: '/family/', color: '#EC4899' },
   { key: 'settings', icon: 'settings-outline' as const, route: '/settings', color: '#6366F1' },
   { key: 'disclaimer', icon: 'information-circle-outline' as const, route: '/disclaimer', color: '#F59E0B' },
+  { key: 'gold_silver', icon: 'cash-outline' as const, route: '/gold-silver', color: '#C9971A' },
 ];
 
 export default function MoreScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const fonts = useFont();
   const insets = useSafeAreaInsets();
+  const router = useRouter();
 
   const handlePress = (route: string) => {
     if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -54,7 +56,9 @@ export default function MoreScreen() {
               <Ionicons name={item.icon} size={22} color={item.color} />
             </View>
             <Text style={[styles.menuText, { fontFamily: fonts.medium }]}>
-              {t(`more.${item.key}`)}
+              {item.key === 'gold_silver'
+                ? (i18n.language?.startsWith('ta') ? 'தங்கம் & வெள்ளி விலை' : 'Gold & Silver Prices')
+                : t(`more.${item.key}`)}
             </Text>
             <Ionicons name="chevron-forward" size={18} color={Colors.textTertiary} />
           </Pressable>

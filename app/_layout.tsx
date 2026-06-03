@@ -7,6 +7,8 @@ import { KeyboardProvider } from "react-native-keyboard-controller";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { queryClient } from "@/lib/query-client";
 import { AppProvider } from "@/lib/app-context";
+import { ExpenseProvider } from "@/lib/expense-context";
+import { BudgetProvider } from "@/lib/budget-context";
 import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from "@expo-google-fonts/inter";
 import { NotoSansTamil_400Regular, NotoSansTamil_500Medium, NotoSansTamil_600SemiBold, NotoSansTamil_700Bold } from "@expo-google-fonts/noto-sans-tamil";
 import "@/lib/i18n";
@@ -28,6 +30,8 @@ function RootLayoutNav() {
       <Stack.Screen name="family/add" options={{ headerShown: true, headerBackTitle: "", presentation: "modal" }} />
       <Stack.Screen name="settings" options={{ headerShown: true, headerBackTitle: "" }} />
       <Stack.Screen name="disclaimer" options={{ headerShown: true, headerBackTitle: "" }} />
+      <Stack.Screen name="expenses" options={{ headerShown: true, headerBackTitle: "" }} />
+      <Stack.Screen name="budget" options={{ headerShown: true, headerBackTitle: "" }} />
     </Stack>
   );
 }
@@ -57,9 +61,13 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <GestureHandlerRootView>
           <KeyboardProvider>
-            <AppProvider>
-              <RootLayoutNav />
-            </AppProvider>
+            <BudgetProvider>
+              <ExpenseProvider>
+                <AppProvider>
+                  <RootLayoutNav />
+                </AppProvider>
+              </ExpenseProvider>
+            </BudgetProvider>
           </KeyboardProvider>
         </GestureHandlerRootView>
       </QueryClientProvider>

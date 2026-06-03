@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform, Linking } from 'react-native';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -36,6 +36,12 @@ export default function SchemesScreen() {
   const handleScheme = (id: string) => {
     if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     router.push({ pathname: '/scheme/[id]', params: { id } });
+  };
+
+  const handleOpenLink = (link?: string) => {
+    if (link) {
+      Linking.openURL(link);
+    }
   };
 
   return (
@@ -94,9 +100,18 @@ export default function SchemesScreen() {
               <Text style={[styles.schemeName, { fontFamily: fonts.semiBold }]} numberOfLines={2}>
                 {isTamil ? scheme.name_ta : scheme.name_en}
               </Text>
-              <Text style={[styles.schemeBenefit, { fontFamily: fonts.regular }]} numberOfLines={1}>
+              <Text style={[styles.schemeBenefit, { fontFamily: fonts.regular }]} numberOfLines={2}>
                 {isTamil ? scheme.benefits_ta : scheme.benefits_en}
               </Text>
+              <Pressable
+                onPress={(event) => {
+                  event.stopPropagation?.();
+                  handleOpenLink(scheme.link);
+                }}
+                style={styles.linkButton}
+              >
+                <Text style={[styles.linkText, { fontFamily: fonts.medium }]}>Visit Official Portal</Text>
+              </Pressable>
             </View>
             <Ionicons name="chevron-forward" size={18} color={Colors.textTertiary} />
           </Pressable>
@@ -146,4 +161,14 @@ const styles = StyleSheet.create({
   schemeInfo: { flex: 1 },
   schemeName: { fontSize: 15, color: Colors.text, marginBottom: 3 },
   schemeBenefit: { fontSize: 12, color: Colors.textSecondary },
+  linkButton: {
+    marginTop: 8,
+    paddingVertical: 6,
+    alignSelf: 'flex-start',
+  },
+  linkText: {
+    color: '#2563EB',
+    fontSize: 13,
+    textDecorationLine: 'underline',
+  },
 });

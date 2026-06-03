@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -9,8 +9,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Colors from '@/constants/colors';
 import { useFont } from '@/lib/fonts';
 import { useApp } from '@/lib/app-context';
+import { financeTips } from '@/lib/finance-tips';
+import { useExpenses } from '@/lib/expense-context';
 
 const quickActions = [
+  { key: 'expenses', icon: 'wallet' as const, route: '/expenses', color: '#10B981' },
+  { key: 'budget', icon: 'bar-chart' as const, route: '/budget', color: '#8B5CF6' },
   { key: 'calculators', icon: 'calculator' as const, route: '/(tabs)/calculators', color: '#3B82F6' },
   { key: 'govt_schemes', icon: 'document-text' as const, route: '/(tabs)/schemes', color: '#8B5CF6' },
   { key: 'learn_finance', icon: 'book' as const, route: '/(tabs)/learn', color: '#F59E0B' },
@@ -18,12 +22,20 @@ const quickActions = [
 ];
 
 export default function HomeScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const fonts = useFont();
   const insets = useSafeAreaInsets();
   const { familyMembers } = useApp();
+  const { getCurrentMonthSummary } = useExpenses();
+  const expenseSummary = getCurrentMonthSummary();
+  const isTamil = i18n.language === 'ta';
 
-  const totalIncome = familyMembers.reduce((sum, m) => sum + (m.income || 0), 0);
+  const totalIncome = expenseSummary.totalIncome;
+  const [tip] = useState(() => {
+    const randomIndex = Math.floor(Math.random() * financeTips.length);
+    return financeTips[randomIndex];
+  });
+  const tipText = isTamil ? tip.ta : tip.en;
 
   const handleAction = (route: string) => {
     if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -82,8 +94,27 @@ export default function HomeScreen() {
               {t('home.total_income')}
             </Text>
           </View>
+          <View style={styles.statDivider} />
+          <View style={styles.statItem}>
+            <Ionicons name="trending-down-outline" size={18} color="rgba(255,255,255,0.8)" />
+            <Text style={[styles.statValue, { fontFamily: fonts.bold }]}>
+              {expenseSummary.totalExpenses > 0 ? `₹${expenseSummary.totalExpenses.toLocaleString('en-IN')}` : '--'}
+            </Text>
+            <Text style={[styles.statLabel, { fontFamily: fonts.regular }]}>
+              {i18n.language?.startsWith('ta') ? 'மொத்த செலவு' : 'Expenses'}
+            </Text>
+          </View>
         </View>
       </LinearGradient>
+
+      <View style={styles.tipCard}>
+        <Text style={[styles.tipTitle, { fontFamily: fonts.semiBold }]}>
+          💡 {t('tipOfDay')}
+        </Text>
+        <Text style={[styles.tipText, { fontFamily: fonts.regular }]}>
+          {tipText}
+        </Text>
+      </View>
 
       <Text style={[styles.sectionTitle, { fontFamily: fonts.semiBold }]}>
         {t('home.quick_actions')}
@@ -100,7 +131,11 @@ export default function HomeScreen() {
               <Ionicons name={action.icon} size={24} color={action.color} />
             </View>
             <Text style={[styles.actionText, { fontFamily: fonts.medium }]}>
-              {t(`home.${action.key}`)}
+              {action.key === 'expenses'
+                ? (i18n.language?.startsWith('ta') ? 'வரவு செலவு' : 'Expenses')
+                : action.key === 'budget'
+                ? (i18n.language?.startsWith('ta') ? 'பட்ஜெட்' : 'Budget')
+                : t(`home.${action.key}`)}
             </Text>
           </Pressable>
         ))}
@@ -191,6 +226,24 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: Colors.text,
     marginBottom: 14,
+  },
+  tipCard: {
+    backgroundColor: '#FFF7ED',
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#FED7AA',
+  },
+  tipTitle: {
+    fontSize: 14,
+    color: '#C2410C',
+    marginBottom: 6,
+  },
+  tipText: {
+    fontSize: 14,
+    color: '#7C2D12',
+    lineHeight: 20,
   },
   actionsGrid: {
     flexDirection: 'row',

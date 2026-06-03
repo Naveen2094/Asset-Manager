@@ -3,7 +3,7 @@ import { Tabs } from "expo-router";
 import { NativeTabs, Icon, Label } from "expo-router/unstable-native-tabs";
 import { BlurView } from "expo-blur";
 import { Ionicons } from "@expo/vector-icons";
-import { Platform, StyleSheet, useColorScheme, View } from "react-native";
+import { Platform, StyleSheet, Text, useColorScheme, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -43,7 +43,8 @@ function ClassicTabLayout() {
   const isWeb = Platform.OS === "web";
   const isIOS = Platform.OS === "ios";
   const insets = useSafeAreaInsets();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const language = i18n.language;
 
   return (
     <Tabs
@@ -108,6 +109,22 @@ function ClassicTabLayout() {
           title: t('tabs.learn'),
           tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? "book" : "book-outline"} size={22} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="chatbot"
+        options={{
+          title: language === "en" ? "Chat" : "அரட்டை",
+          tabBarIcon: () => <Text style={{ fontSize: 20 }}>💬</Text>,
+        }}
+      />
+      <Tabs.Screen
+        name="gold-silver"
+        options={{
+          title: language === "en" ? "Gold & Silver" : "தங்கம்",
+          tabBarIcon: ({ color }) => (
+            <Text style={{ fontSize: 18, color }}>{'💰'}</Text>
           ),
         }}
       />

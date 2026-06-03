@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, TextInput, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, TextInput, Platform, Linking } from 'react-native';
 import { useLocalSearchParams, Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
@@ -33,6 +33,14 @@ export default function SchemeDetailScreen() {
         occupation,
       });
       setEligibilityResult(result);
+    }
+  };
+
+  const handleApply = () => {
+    if (scheme.link) {
+      Linking.openURL(scheme.link).catch(() => {
+        console.error('Failed to open URL:', scheme.link);
+      });
     }
   };
 
@@ -72,6 +80,13 @@ export default function SchemeDetailScreen() {
         <Text style={[styles.schemeName, { fontFamily: fonts.bold }]}>
           {isTamil ? scheme.name_ta : scheme.name_en}
         </Text>
+
+        <Pressable style={styles.applyButton} onPress={handleApply}>
+          <Ionicons name="open-outline" size={20} color="#fff" />
+          <Text style={[styles.applyButtonText, { fontFamily: fonts.semiBold }]}>
+            {isTamil ? 'அதிகாரப்பூர்வ இணையதளம்' : 'Visit Official Website'}
+          </Text>
+        </Pressable>
 
         {sections.map((section, i) => (
           <View key={i} style={styles.section}>
@@ -205,6 +220,20 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   schemeName: { fontSize: 20, color: Colors.text, textAlign: 'center', marginBottom: 24 },
+  applyButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: Colors.primary,
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 20,
+  },
+  applyButtonText: {
+    fontSize: 16,
+    color: '#fff',
+  },
   section: {
     backgroundColor: Colors.surface,
     borderRadius: 16,
